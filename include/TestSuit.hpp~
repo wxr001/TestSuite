@@ -1,0 +1,46 @@
+// Simple Test Suite Library -*- C++ -*-
+
+// Copyright (C) 2017  Scott Brown
+
+// This file is part of the STSL library.
+// This library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+
+// You should have received a copy of the GNU Lesser General Public License
+// along with this library.  If not, see <http://www.gnu.org/licenses/>.
+
+#ifndef SIMPLE_TEST_SUITE_LIBRARY_TEST_SUITE
+#define SIMPLE_TEST_SUITE_LIBRARY_TEST_SUITE
+#include <functional>// function
+#include <type_traits>// enable_if_t, is_invocable_r_v
+#include <utility>// forward
+#include <vector>// vector
+
+namespace TestSuite
+{
+#define T_ASSERT_OP(lhs, rhs, op) if(!((lhs) op (rhs))) return false;
+#define T_ASSERT_EQ(lhs, rhs) T_ASSERT_OP(lhs, rhs, ==)
+#define T_ASSERT(lhs, rhs) T_ASSERT_EQ(lhs, rhs)
+T_ASSERT(1, 2)
+	class SingleTestSuite
+	{
+	public:
+		template <typename T, 
+				 std::enable_if_t<std::is_invocable_r_v<bool, T>>>
+		void resiger_test(T&& func)
+		{
+			_test_functions.emplace_back(std::forward(func));
+		}
+		bool run_test();
+	private:
+		std::vector<std::function<bool()>> _test_functions;
+	};
+}
+#endif
